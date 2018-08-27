@@ -11,69 +11,40 @@ public class ReversiSolver {
 	private Point bestMove;
 
 	public ReversiSolver(String input) {
-		if (!validateInput(input)) {
-			throw new IllegalArgumentException("Input not provided");
-		}
+		validateInput(input);
 
-		List<String> board = initialiseBoard(input);
-		bestMove = findBestMove(board);
+		Board board = initialiseBoard(input);
+		bestMove = board.findBestMove();
 	}
 
 	public Point getBestMove() {
-		return this.bestMove;
-	}
-
-	private Point findBestMove(List<String> board) {
-		int currentSet = 0;
-		int bestSet = 0;
-		boolean foundBlack = false;
-		Point bestMove = new Point();
-
-		for (int row = 0; row < board.size(); row++) {
-			String line = board.get(row);
-
-			char[] charArray = line.toCharArray();
-			for (int col = 0; col < charArray.length; col++) {
-				char token = charArray[col];
-
-				switch (token) {
-					case 'b':
-						if (foundBlack) {
-							if (currentSet > bestSet) {
-								bestSet = currentSet;
-								bestMove.setLocation(row, col);
-							}
-							currentSet = 0;
-							foundBlack = false;
-						} else {
-							foundBlack = true;
-						}
-						break;
-					case 'w':
-						if (foundBlack) {
-							currentSet++;
-						}
-						break;
-					case '.':
-						if (foundBlack) {
-							currentSet = 0;
-							foundBlack = false;
-						}
-						break;
-					default:
-						throw new IllegalArgumentException("Invalid token found on line:" + line + ", token:" + token);
-				}
-			}
-
-			// Reset
-			foundBlack = false;
-			currentSet = 0;
-		}
-
 		return bestMove;
 	}
 
-	private List<String> initialiseBoard(String input) {
+	private Board initialiseBoard(String input) {
+		Board board = new Board();
+		String[] lines = input.split("\n");
+
+		for (int row = 0; row < lines.length; row++) {
+			String line = lines[row];
+			char[] charArray = line.toCharArray();
+
+			for (int col = 0; col < charArray.length; col++) {
+				char ch = charArray[col];
+				TokenType type = TokenType.convert(ch);
+
+				board.addToken(row, col, type);
+			}
+		}
+
+		return board;
+	}
+
+	private void validateInput(String input) {
+		if (input == null || "".equals(input)) {
+			throw new IllegalArgumentException("Input was empty");
+		}
+
 		List<String> lines = Arrays.asList(input.split("\n"));
 
 		if (lines.size() < 8) {
@@ -82,22 +53,17 @@ public class ReversiSolver {
 
 		for (int i = 0; i < lines.size(); i++) {
 			String line = lines.get(i);
+
 			if (line.length() < 8) {
 				String errorMessage = MessageFormat.format("Line {0} has {1} characters, should have 8", i, line.length());
 				throw new IllegalArgumentException(errorMessage);
 			}
 		}
-
-		return lines;
-	}
-
-	private boolean validateInput(String input) {
-		return input != null && !"".equals(input);
 	}
 
 	public static void main(String[] args) {
 		StringJoiner input = new StringJoiner("\n");
-		input.add("........");
+		input.add(".w......");
 		input.add("........");
 		input.add("........");
 		input.add("........");
@@ -107,8 +73,9 @@ public class ReversiSolver {
 		input.add("........");
 
 		ReversiSolver solver = new ReversiSolver(input.toString());
-		System.out.println("The best move was: " + solver.getBestMove());
-
+		Point bestMove = solver.getBestMove();
+		String result = MessageFormat.format("The best move was row: {0}, column: {1}", bestMove.getX(), bestMove.getY());
+		System.out.println(result);
 	}
 
 }
