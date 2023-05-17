@@ -12,6 +12,7 @@ their tokens at both ends of the line (either a horizontal line, a vertical line
 For this program, the Reversi board is represented in ASCII, with black as “b”, white as “w”, an empty square as
 a period, and newlines between each row.
 
+```
 .b....w.
 ....x...
 ..x.w...
@@ -20,11 +21,12 @@ a period, and newlines between each row.
 ....bb..
 ........
 ........
+```
 
 For instance, in this first board black has two opportunities to take white’s tokens, by playing at either of the marked locations (x).
 
 So the results of black playing at either spot are these:
-
+```
 .b....w.        .b....w.
 ........        ....b...
 ..b.w...        ....b...
@@ -33,7 +35,7 @@ So the results of black playing at either spot are these:
 ....bb..        ....bb..
 ........        ........
 ........        ........
-
+```
 # The challenge
 Write a program that accepts such a board representation, either from STDIN or by reading a file, and outputs the single move by black that takes the most white pieces. In the case of a tie-break, it does not matter which move is output.
 
